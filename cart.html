@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Корзина | СГС</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Шапка сайта -->
+  <header class="header">
+    <div class="header-top">
+      <img src="img/new-logo.webp" alt="Логотип СГС" class="logo" />
+      <div class="contact-info">
+        <p>Новосибирская обл., с. Прокудское, ул. Школьный переулок, д. 19а</p>
+        <p>Отдел запчастей: <span class="highlight">+7 (996) 429-77-30</span></p>
+      </div>
+    </div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="services.html">Услуги</a></li>
+        <li><a href="parts.html">Запчасти</a></li>
+        <li><a href="store.html">Магазин</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+        <li><a href="cart.html" class="active">Корзина</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Контейнер с товарами -->
+  <main class="store-section">
+    <div class="store-container" id="cart-items"></div>
+    <h3 id="total-price" style="margin: 20px 0 10px 20px;"></h3>
+    <div style="margin: 0 0 40px 20px;">
+      <button class="btn" onclick="openOrderModal()">Оформить заказ</button>
+    </div>
+  </main>
+
+  <!-- Модальное окно -->
+  <!-- Модальное окно -->
+<div id="order-modal" class="modal hidden">
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <h2>Оформление заказа</h2>
+      <form id="order-form">
+        <label>Имя:
+          <input type="text" name="name" required />
+        </label>
+        <label>Телефон:
+          <input type="tel" name="phone" required />
+        </label>
+        <button type="submit" class="btn">Подтвердить</button>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop hidden" onclick="closeOrderModal()"></div>
+
+
+
+  <script src="cart-popup-advanced.js"></script>
+
+  <script>
+    function openOrderModal() {
+      document.getElementById('order-modal').classList.remove('hidden');
+      document.querySelector('.modal-backdrop').classList.remove('hidden');
+    }
+    function closeOrderModal() {
+      document.getElementById('order-modal').classList.add('hidden');
+      document.querySelector('.modal-backdrop').classList.add('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof renderCartItems === 'function') renderCartItems();
+
+      const form = document.getElementById('order-form');
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const name = form.name.value.trim();
+          const phone = form.phone.value.trim();
+          if (name && phone) {
+            localStorage.removeItem('cart');
+            renderCartItems();
+            const modalContent = document.querySelector('#order-modal .modal-content');
+            modalContent.innerHTML = `
+              <h2>Спасибо за заказ!</h2>
+              <p>Наш менеджер свяжется с вами в ближайшее время для уточнения деталей.</p>
+              <button class="btn" onclick="closeOrderModal()">Закрыть</button>
+            `;
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

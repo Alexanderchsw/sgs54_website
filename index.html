@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Сибирский Грузовой Сервис</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.png" type="image/png">
+  <script defer src="script.js"></script>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-top">
+      <img src="img/new-logo.webp" alt="Логотип СГС" class="logo" />
+      <div class="contact-info">
+        <p>Новосибирская обл., с. Прокудское, ул. Школьный переулок, д. 19а</p>
+        <p>Отдел запчастей: <span class="highlight">+7 (996) 429-77-30</span></p>
+        <p>Приемка: <span class="highlight">+7 (913) 791-56-20</span></p>
+        <p><a href="mailto:info@sgs54.ru" class="email">info@sgs54.ru</a></p>
+      </div>
+    </div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="services.html">Услуги</a></li>
+        <li><a href="parts.html">Запчасти</a></li>
+        <li><a href="store.html">Магазин</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Гарантированный ремонт и обслуживание<br />грузовой техники</h1>
+    <p>Комплексное техобслуживание, диагностика, ремонт, запасные части — всё в одном месте.</p>
+    <a href="#" class="btn open-modal">Записаться на обслуживание</a>
+  </section>
+
+  <section class="why-us">
+    <h2>Почему выбирают нас</h2>
+    <div class="features">
+      <div class="feature">
+        <img src="img/icons/experience.svg" alt="Иконка опыт" />
+        <h3>10+ лет опыта</h3>
+        <p>Надёжность, подтверждённая годами работы с грузовиками и спецтехникой.</p>
+      </div>
+      <div class="feature">
+        <img src="img/icons/warehouse.svg" alt="Иконка склад" />
+        <h3>Собственный склад</h3>
+        <p>Запчасти в наличии и под заказ — без ожиданий и задержек.</p>
+      </div>
+      <div class="feature">
+        <img src="img/icons/guarantee.svg" alt="Иконка гарантия" />
+        <h3>Гарантия на услуги</h3>
+        <p>Мы уверены в своей работе — предоставляем гарантию на каждый вид ремонта.</p>
+      </div>
+      <div class="feature">
+        <img src="img/icons/service.svg" alt="Иконка сервис" />
+        <h3>Полный цикл сервиса</h3>
+        <p>От диагностики до капитального ремонта — всё под контролем в одном месте.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="services">
+    <h2>Наши ключевые услуги</h2>
+    <ul class="services-list">
+      <li onclick="showService('diagnostic')">Диагностика и ТО</li>
+      <li onclick="showService('capital')">Капитальный и текущий ремонт</li>
+      <li onclick="showService('suspension')">Ремонт ходовой части</li>
+      <li onclick="showService('brakes')">Ремонт тормозной системы</li>
+    </ul>
+    <div class="service-description" id="service-description"></div>
+  </section>
+
+  <!-- МОДАЛЬНОЕ ОКНО -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Оставьте заявку</h2>
+      <form action="send-form.php" method="POST">
+        <input type="text" name="name" placeholder="Ваше имя" required>
+        <input type="email" name="email" placeholder="Ваш Email" required>
+        <textarea name="message" placeholder="Опишите вашу задачу..." required></textarea>
+        <button type="submit" class="btn">Отправить</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <img src="img/new-logo.webp" alt="Логотип СГС" class="footer-logo" />
+    <p>Сибирский Грузовой Сервис, 2024<br />
+      г. Новосибирск, м-он Коченевский<br />
+      <span class="highlight">+7 (996) 429-77-30 | +7 (913) 791-56-20</span><br />
+      <a href="mailto:info@sgs54.ru" class="email">info@sgs54.ru</a>
+    </p>
+  </footer>
+</body>
+</html>

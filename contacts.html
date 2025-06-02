@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Контакты | Сибирский Грузовой Сервис</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.png" type="image/png">
+  <style>
+    .map-container {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <img src="img/new-logo.webp" alt="Логотип СГС" class="logo" />
+    <div class="contact-info">
+      <p>Новосибирская обл., с. Прокудское, ул. Школьный переулок, д. 19а</p>
+      <p>Отдел запчастей: <span class="highlight">+7 (996) 429-77-30</span></p>
+      <p>Приемка: <span class="highlight">+7 (913) 791-56-20</span></p>
+      <p><a href="mailto:info@sgs54.ru" class="email">info@sgs54.ru</a></p>
+    </div>
+  </div>
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="services.html">Услуги</a></li>
+      <li><a href="parts.html">Запчасти</a></li>
+      <li><a href="store.html">Магазин</a></li>
+      <li><a href="contacts.html" class="active">Контакты</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="contact-hero">
+  <div class="overlay">
+    <h1>Свяжитесь с нами</h1>
+    <p>Мы всегда на связи и готовы помочь вам с любыми вопросами</p>
+  </div>
+</section>
+
+<section class="contact-page">
+  <div class="contact-grid">
+    <div class="contact-info-block">
+      <h2>Контактные данные</h2>
+      <p><strong>Адрес:</strong> Новосибирская обл., с. Прокудское, ул. Школьный переулок, д. 19а</p>
+      <p><strong>Отдел запчастей:</strong> +7 (996) 429-77-30</p>
+      <p><strong>Приемка:</strong> +7 (913) 791-56-20</p>
+      <p><strong>Email:</strong> <a href="mailto:info@sgs54.ru">info@sgs54.ru</a></p>
+    </div>
+
+    <div class="contact-form">
+      <h2>Отправить заявку</h2>
+      <form action="send-form.php" method="POST">
+        <input type="text" name="name" placeholder="Ваше имя" required />
+        <input type="email" name="email" placeholder="Ваш Email" required />
+        <textarea name="message" placeholder="Сообщение..." required></textarea>
+        <button type="submit" class="btn">Отправить</button>
+      </form>
+    </div>
+  </div>
+
+<!-- Яндекс.Карта с точно выровненным маркером -->
+<div class="map-container">
+  <iframe
+    src="https://yandex.ru/map-widget/v1/?ll=82.46707%2C55.02100&z=17&pt=82.46707,55.02100,pm2rdl"
+    width="100%"
+    height="450"
+    frameborder="0"
+    allowfullscreen
+    loading="lazy">
+  </iframe>
+</div>
+
+
+</section>
+
+<footer class="footer">
+  <img src="img/new-logo.webp" alt="Логотип СГС" class="footer-logo" />
+  <p>Сибирский Грузовой Сервис, 2024<br />
+    г. Новосибирск, м-он Коченевский<br />
+    <span class="highlight">+7 (996) 429-77-30 | +7 (913) 791-56-20</span><br />
+    <a href="mailto:info@sgs54.ru" class="email">info@sgs54.ru</a>
+  </p>
+</footer>
+
+</body>
+</html>

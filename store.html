@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Магазин | СГС</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <img src="img/new-logo.webp" alt="Логотип СГС" class="logo" />
+    <div class="contact-info">
+      <p>Новосибирская обл., с. Прокудское, ул. Школьный переулок, д. 19а</p>
+      <p>Отдел запчастей: <span class="highlight">+7 (996) 429-77-30</span></p>
+    </div>
+  </div>
+<nav class="navbar">
+  <ul>
+    <li><a href="index.html">Главная</a></li>
+    <li><a href="services.html">Услуги</a></li>
+    <li><a href="parts.html">Запчасти</a></li>
+    <li><a href="store.html">Магазин</a></li>
+    <li><a href="contacts.html">Контакты</a></li>
+    <li><a href="cart.html">Корзина</a></li>
+  </ul>
+</nav>
+
+</header>
+
+<section class="store-section">
+  <div class="store-container" id="product-list">
+    <!-- Товары будут подгружаться сюда -->
+  </div>
+</section>
+
+<script>
+  fetch('data/products_converted.txt')
+    .then(response => response.text())
+    .then(data => {
+      const lines = data.split('\n');
+      const headers = lines[0].split('\t');
+      const products = lines.slice(1);
+
+      let htmlContent = '';
+
+      products.forEach(product => {
+        if (product.trim()) {
+          const [name, stock, unit, price, article, image] = product.split('\t');
+
+          const displayStock = stock && stock.trim() && stock !== 'Нет данных' ? `${stock} ${unit}` : '—';
+          const displayPrice = price && price.trim() && price !== 'Нет данных' ? `${price} ₽` : '—';
+          const displayArticle = article && article.trim() && article !== 'Нет данных' ? article : '—';
+          const requiresClarification = displayStock === '—' || displayPrice === '—' || displayArticle === '—';
+          const badge = requiresClarification ? `<div class="badge">Требует уточнения</div>` : '';
+
+          htmlContent += `
+            <div class="product-card">
+              ${badge}
+              <img src="${image ? image : 'img/no-image.png'}" alt="${name}" class="product-image"/>
+              <h3>${name}</h3>
+              <p><strong>Артикул:</strong> ${displayArticle}</p>
+              <p><strong>Остаток:</strong> ${displayStock}</p>
+              <p><strong>Цена:</strong> ${displayPrice}</p>
+              <div class="btn-wrapper">
+                <button class="btn small-btn" onclick="addToCart('${name}', '${displayArticle}', '${price}')">В корзину</button>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      document.getElementById('product-list').innerHTML = htmlContent;
+    });
+
+  function addToCart(name, article, price) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existing = cart.find(item => item.name === name && item.article === article);
+
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      cart.push({ name, article, price, quantity: 1 });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Товар добавлен в корзину');
+  }
+</script>
+<script src="cart-popup-advanced.js"></script>
+
+
+
+</body>
+</html>
