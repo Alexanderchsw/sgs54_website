@@ -71,7 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     cart.forEach(item => {
-      const price = item.price && item.price !== '—' ? parseFloat(item.price.replace(',', '.')) : null;
+      const cleanedPrice = item.price?.replace(/\s/g, '').replace(',', '.');  // убираем пробелы и заменяем запятую
+      const price = cleanedPrice && cleanedPrice !== '—' ? parseFloat(cleanedPrice) : null;
       const subtotal = price ? price * item.quantity : 0;
       if (subtotal) total += subtotal;
 

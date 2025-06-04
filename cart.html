@@ -2,21 +2,22 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Корзина | СГС</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- Шапка сайта -->
+  <!-- ===== ШАПКА / МЕНЮ ===== -->
   <header class="header">
     <div class="header-top">
-      <img src="img/new-logo.webp" alt="Логотип СГС" class="logo" />
+      <img src="img/new-logo.webp" alt="Логотип СГС" class="logo">
       <div class="contact-info">
-        <p>Новосибирская обл., с. Прокудское, ул. Школьный переулок, д. 19а</p>
+        <p>Новосибирская обл., с. Прокудское, ул. Школьный пер., д. 19а</p>
         <p>Отдел запчастей: <span class="highlight">+7 (996) 429-77-30</span></p>
       </div>
     </div>
+
     <nav class="navbar">
       <ul>
         <li><a href="index.html">Главная</a></li>
@@ -29,71 +30,49 @@
     </nav>
   </header>
 
-  <!-- Контейнер с товарами -->
-  <main class="store-section">
-    <div class="store-container" id="cart-items"></div>
-    <h3 id="total-price" style="margin: 20px 0 10px 20px;"></h3>
-    <div style="margin: 0 0 40px 20px;">
-      <button class="btn" onclick="openOrderModal()">Оформить заказ</button>
-    </div>
+  <!-- ===== КОРЗИНА ===== -->
+  <main class="cart-page">
+    <table id="cart-table" class="cart-table">
+      <thead>
+        <tr>
+          <th>Наименование</th>
+          <th>Артикул</th>
+          <th width="120">Цена&nbsp;₽</th>
+          <th width="150">Кол-во</th>
+          <th width="120">Сумма&nbsp;₽</th>
+          <th width="90"></th>
+        </tr>
+      </thead>
+      <tbody id="cart-body"></tbody>
+    </table>
+
+    <p id="total" class="total-line">Итого (0&nbsp;шт): 0&nbsp;₽</p>
+
+    <button id="checkoutBtn" class="btn big-btn">Оформить заказ</button>
   </main>
 
-  <!-- Модальное окно -->
-  <!-- Модальное окно -->
-<div id="order-modal" class="modal hidden">
-  <div class="modal-overlay">
+  <!-- ===== МОДАЛЬНОЕ ОКНО ОФОРМЛЕНИЯ ===== -->
+  <div id="order-modal" class="modal hidden">
     <div class="modal-content">
+      <span class="close-modal">&times;</span>
+
       <h2>Оформление заказа</h2>
-      <form id="order-form">
-        <label>Имя:
-          <input type="text" name="name" required />
-        </label>
-        <label>Телефон:
-          <input type="tel" name="phone" required />
-        </label>
-        <button type="submit" class="btn">Подтвердить</button>
+      <form id="order-form" class="order-form">
+        <label for="customer-name">Ваше имя *</label>
+        <input type="text" id="customer-name" required>
+
+        <label for="customer-phone">Телефон *</label>
+        <input type="tel" id="customer-phone"
+               placeholder="+7 (___) ___-__-__" required>
+        <!-- подпись-ошибка -->
+        <small id="phone-error" class="error-msg">Введите корректный номер телефона</small>
+
+        <button type="submit" class="btn big-btn">Отправить</button>
       </form>
     </div>
   </div>
-</div>
-<div class="modal-backdrop hidden" onclick="closeOrderModal()"></div>
 
-
-
-  <script src="cart-popup-advanced.js"></script>
-
-  <script>
-    function openOrderModal() {
-      document.getElementById('order-modal').classList.remove('hidden');
-      document.querySelector('.modal-backdrop').classList.remove('hidden');
-    }
-    function closeOrderModal() {
-      document.getElementById('order-modal').classList.add('hidden');
-      document.querySelector('.modal-backdrop').classList.add('hidden');
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof renderCartItems === 'function') renderCartItems();
-
-      const form = document.getElementById('order-form');
-      if (form) {
-        form.addEventListener('submit', function (e) {
-          e.preventDefault();
-          const name = form.name.value.trim();
-          const phone = form.phone.value.trim();
-          if (name && phone) {
-            localStorage.removeItem('cart');
-            renderCartItems();
-            const modalContent = document.querySelector('#order-modal .modal-content');
-            modalContent.innerHTML = `
-              <h2>Спасибо за заказ!</h2>
-              <p>Наш менеджер свяжется с вами в ближайшее время для уточнения деталей.</p>
-              <button class="btn" onclick="closeOrderModal()">Закрыть</button>
-            `;
-          }
-        });
-      }
-    });
-  </script>
+  <!-- ===== СКРИПТЫ ===== -->
+  <script src="cart.js"></script>
 </body>
 </html>

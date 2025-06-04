@@ -45,10 +45,12 @@ function showService(serviceKey) {
 
 // === ВСЯ ИНИЦИАЛИЗАЦИЯ ПОСЛЕ ЗАГРУЗКИ ===
 document.addEventListener('DOMContentLoaded', () => {
-  // Подгружаем описание первой услуги
-  showService('diagnostic');
+  // === Подгружаем первую услугу ===
+  if (document.getElementById('service-description')) {
+    showService('diagnostic');
+  }
 
-  // Подсветка активного пункта меню
+  // === Подсветка активного пункта меню ===
   const currentPage = window.location.pathname.split("/").pop();
   document.querySelectorAll(".navbar a").forEach(link => {
     const href = link.getAttribute("href");
@@ -57,14 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Раскрытие FAQ
+  // === FAQ (если есть) ===
   document.querySelectorAll('.faq-item').forEach(item => {
     item.addEventListener('click', () => {
       item.classList.toggle('active');
     });
   });
 
-  // ====== МОДАЛКА ======
+  // === МОДАЛКА ===
   const modal = document.getElementById('modal');
   const closeBtn = document.querySelector('.close-modal');
 
@@ -73,59 +75,78 @@ document.addEventListener('DOMContentLoaded', () => {
     openBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (modal) modal.style.display = 'flex';
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.style.display = 'flex';
+        }
       });
     });
   }
 
-  // Привязываем обработчики при загрузке
   bindModalButtons();
 
-  // Привязываем заново после клика по услугам (через делегирование)
   document.querySelector('.services-list')?.addEventListener('click', () => {
-    setTimeout(() => bindModalButtons(), 50); // ждём, пока контент вставится
+    setTimeout(() => bindModalButtons(), 50);
   });
 
   if (closeBtn) {
     closeBtn.addEventListener('click', () => {
+      modal.classList.add('hidden');
       modal.style.display = 'none';
     });
 
     window.addEventListener('click', e => {
-      if (e.target === modal) modal.style.display = 'none';
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+      }
     });
+  }
+
+  // === ПОДГРУЗКА ТОВАРОВ (если есть магазин) ===
+  const productList = document.getElementById('product-list');
+  if (productList) {
+    fetch('data/products_converted.txt')
+      .then(response => response.text())
+      .then(data => {
+        const lines = data.split('\n');
+        lines.forEach(line => {
+          const [name, article, stock, price, image] = line.split('|');
+
+          if (!name || name.trim() === '') return; // пропускаем без названия
+
+          const safeArticle = article?.trim() || '—';
+          const safeStock = stock?.trim() || '—';
+          const safePrice = price?.trim() || '—';
+          const showBadge = (safeArticle === '—' || safePrice === '—');
+
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          if (showBadge) card.classList.add('requires-clarification');
+
+          card.innerHTML = `
+            ${showBadge ? '<div class="badge">Требует уточнения</div>' : ''}
+            <img src="${image || 'img/default.png'}" alt="${name}">
+            <h3>${name}</h3>
+            <p><strong>Артикул:</strong> ${safeArticle}</p>
+            <p><strong>Остаток:</strong> ${safeStock} шт</p>
+            <p><strong>Цена:</strong> ${safePrice !== '—' ? `${safePrice} ₽` : '—'}</p>
+            <button class="buy-button">Купить</button>
+          `;
+
+          const btn = card.querySelector('.buy-button');
+          btn.addEventListener('click', () => {
+            if (typeof addToCart === 'function') {
+              addToCart(name, safeArticle, safePrice);
+            } else {
+              alert('Функция добавления в корзину недоступна.');
+            }
+          });
+
+          productList.appendChild(card);
+        });
+      })
+      .catch(err => console.error('Ошибка загрузки товаров:', err));
   }
 });
 
-// Загрузка данных и отрисовка карточек
-fetch('data/products_converted.txt')
-    .then(response => response.text())
-    .then(data => {
-        const products = data.split('\n').map(line => {
-            const [name, article, stock, price, image] = line.split('|');
-            return { name, article, stock, price, image };
-        });
-
-        const productList = document.getElementById('product-list');
-        products.forEach(product => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-
-            // Определяем необходимость ярлыка "Требует уточнения"
-            if (!product.article || !product.price) {
-                card.classList.add('requires-clarification');
-            }
-
-            card.innerHTML = `
-                <img src="${product.image || 'img/default.png'}" alt="${product.name}">
-                <h3>${product.name}</h3>
-                <p><strong>Артикул:</strong> ${product.article || '—'}</p>
-                <p><strong>Остаток:</strong> ${product.stock || '—'} шт</p>
-                <p><strong>Цена:</strong> ${product.price ? `${product.price} ₽` : '—'}</p>
-                <button class="buy-button">Купить</button>
-            `;
-
-            productList.appendChild(card);
-        });
-    })
-    .catch(error => console.error('Ошибка загрузки данных:', error));

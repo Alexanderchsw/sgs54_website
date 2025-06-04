@@ -16,21 +16,38 @@
       <p>Отдел запчастей: <span class="highlight">+7 (996) 429-77-30</span></p>
     </div>
   </div>
-<nav class="navbar">
-  <ul>
-    <li><a href="index.html">Главная</a></li>
-    <li><a href="services.html">Услуги</a></li>
-    <li><a href="parts.html">Запчасти</a></li>
-    <li><a href="store.html">Магазин</a></li>
-    <li><a href="contacts.html">Контакты</a></li>
-    <li><a href="cart.html">Корзина</a></li>
-  </ul>
-</nav>
-
+  <nav class="navbar">
+    <ul>
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="services.html">Услуги</a></li>
+      <li><a href="parts.html">Запчасти</a></li>
+      <li><a href="store.html" class="active">Магазин</a></li>
+      <li><a href="contacts.html">Контакты</a></li>
+      <li><a href="cart.html">Корзина</a></li>
+    </ul>
+  </nav>
 </header>
 
 <section class="store-section">
+  <div class="controls" style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0;">
+    <input type="text" id="searchInput" placeholder="Поиск товара..." style="padding: 8px; font-size: 16px;" />
+    <select id="filterSelect" style="padding: 8px; font-size: 16px;">
+      <option value="">Все категории</option>
+      <option value="двигатель">Двигатель</option>
+      <option value="ходовая">Ходовая</option>
+      <option value="электрика">Электрика</option>
+    </select>
+    <select id="sortSelect" style="padding: 8px; font-size: 16px;">
+      <option value="">Без сортировки</option>
+      <option value="asc">Сначала дешевые</option>
+      <option value="desc">Сначала дорогие</option>
+    </select>
+  </div>
+
   <div class="store-container" id="product-list">
+  <!-- Товары -->
+</div>
+<div id="pagination" class="pagination-controls" style="margin-top: 30px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;"></div>
     <!-- Товары будут подгружаться сюда -->
   </div>
 </section>
@@ -39,40 +56,53 @@
   fetch('data/products_converted.txt')
     .then(response => response.text())
     .then(data => {
-      const lines = data.split('\n');
-      const headers = lines[0].split('\t');
-      const products = lines.slice(1);
+      const lines = data.trim().split('\n');
+      const products = lines.slice(1); // Пропускаем заголовок
 
       let htmlContent = '';
 
-      products.forEach(product => {
-        if (product.trim()) {
-          const [name, stock, unit, price, article, image] = product.split('\t');
+      products.forEach(line => {
+        const [nameRaw, stockRaw, unitRaw, priceRaw, articleRaw, imageRaw] = line.split('\t');
 
-          const displayStock = stock && stock.trim() && stock !== 'Нет данных' ? `${stock} ${unit}` : '—';
-          const displayPrice = price && price.trim() && price !== 'Нет данных' ? `${price} ₽` : '—';
-          const displayArticle = article && article.trim() && article !== 'Нет данных' ? article : '—';
-          const requiresClarification = displayStock === '—' || displayPrice === '—' || displayArticle === '—';
-          const badge = requiresClarification ? `<div class="badge">Требует уточнения</div>` : '';
+        const name = nameRaw?.trim() || 'Без названия';
+        const stock = stockRaw?.trim();
+        const unit = unitRaw?.trim();
+        const price = priceRaw?.trim();
+        const article = articleRaw?.trim();
+        const image = imageRaw?.trim();
 
-          htmlContent += `
-            <div class="product-card">
-              ${badge}
-              <img src="${image ? image : 'img/no-image.png'}" alt="${name}" class="product-image"/>
-              <h3>${name}</h3>
-              <p><strong>Артикул:</strong> ${displayArticle}</p>
-              <p><strong>Остаток:</strong> ${displayStock}</p>
-              <p><strong>Цена:</strong> ${displayPrice}</p>
-              <div class="btn-wrapper">
-                <button class="btn small-btn" onclick="addToCart('${name}', '${displayArticle}', '${price}')">В корзину</button>
-              </div>
+        const displayStock = stock && stock !== 'Нет данных' ? `${stock} ${unit}` : '—';
+        const displayPrice = price && price !== 'Нет данных' ? `${price} ₽` : '—';
+        const displayArticle = article && article !== 'Нет данных' ? article : '—';
+        const displayImage = image ? image : 'img/no-image.png';
+        const requiresClarification = displayStock === '—' || displayPrice === '—' || displayArticle === '—';
+        const badge = requiresClarification ? `<div class="badge">Требует уточнения</div>` : '';
+
+        const category = name.toLowerCase().includes('двигатель') ? 'двигатель'
+                      : name.toLowerCase().includes('ходовая') ? 'ходовая'
+                      : name.toLowerCase().includes('электр') ? 'электрика'
+                      : '';
+
+        htmlContent += `
+          <div class="product-card product" 
+               data-price="${parseFloat(price) || 0}" 
+               data-category="${category}">
+            ${badge}
+            <img src="${displayImage}" alt="${name}" class="product-image"/>
+            <h3 class="product-title">${name}</h3>
+          <p><strong>Артикул:</strong> <span class="product-article">${displayArticle}</span></p>
+            <p><strong>Остаток:</strong> ${displayStock}</p>
+            <p><strong>Цена:</strong> ${displayPrice}</p>
+            <div class="btn-wrapper">
+              <button class="btn small-btn" onclick="addToCart('${name}', '${displayArticle}', '${price || ''}')">В корзину</button>
             </div>
-          `;
-        }
+          </div>
+        `;
       });
 
       document.getElementById('product-list').innerHTML = htmlContent;
-    });
+    })
+    .catch(error => console.error('Ошибка загрузки товаров:', error));
 
   function addToCart(name, article, price) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -88,9 +118,11 @@
     alert('Товар добавлен в корзину');
   }
 </script>
+
+<!-- Подключённый JS для поиска, фильтрации и сортировки -->
+<script src="script.js"></script>
 <script src="cart-popup-advanced.js"></script>
 
-
-
+<script src="store-pagination.js"></script>
 </body>
 </html>
