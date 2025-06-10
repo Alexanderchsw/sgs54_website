@@ -5,8 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ремонт ходовой части | СГС</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="icon" href="img/favicon.png" type="image/png">
   <script defer src="script.js"></script>
+  <style>
+    .form-status {
+      margin-top: 10px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .form-status.success {
+      color: green;
+    }
+    .form-status.error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -24,7 +37,9 @@
         <li><a href="index.html">Главная</a></li>
         <li><a href="services.html">Услуги</a></li>
         <li><a href="parts.html">Запчасти</a></li>
+        <li><a href="store.html">Магазин</a></li>
         <li><a href="contacts.html">Контакты</a></li>
+        <li><a href="cart.html">Корзина</a></li>
       </ul>
     </nav>
   </header>
@@ -55,9 +70,8 @@
 
     <h2 class="price-title">Стоимость работ</h2>
     <div class="diagnostic-price">
-      <p><strong>от 5 000 руб.</strong> — ремонт подвески и стабилизаторов</p>
-      <p><strong>от 10 000 руб.</strong> — комплексная замена узлов ходовой</p>
-      <p><em>* Точная стоимость определяется после осмотра</em></p>
+      <p><strong>от 1 500 руб. за нормо-час работы</strong></p>
+      <p><em>* Окончательная стоимость зависит от объема и сложности работ и определяется после диагностики</em></p>
     </div>
 
     <div class="faq">
@@ -81,11 +95,12 @@
 
     <div class="request-form">
       <h3>Записаться на ремонт ходовой части</h3>
-      <form>
-        <input type="text" placeholder="Ваше имя" required>
-        <input type="tel" placeholder="Телефон" required>
-        <textarea placeholder="Комментарий (необязательно)"></textarea>
+      <form id="suspension-form">
+        <input type="text" name="name" placeholder="Ваше имя" required>
+        <input type="tel" name="email" placeholder="Телефон" required>
+        <textarea name="message" placeholder="Комментарий (необязательно)"></textarea>
         <button type="submit" class="btn">Оставить заявку</button>
+        <p id="suspension-status" class="form-status"></p>
       </form>
     </div>
 
@@ -100,5 +115,37 @@
       <a href="mailto:info@sgs54.ru" class="email">info@sgs54.ru</a>
     </p>
   </footer>
+
+  <script>
+    document.getElementById('suspension-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const status = document.getElementById('suspension-status');
+      status.textContent = '';
+      status.className = 'form-status';
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch('send-request.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const text = await res.text();
+        if (res.ok && text === 'OK') {
+          status.textContent = 'Спасибо! Мы свяжемся с вами для подтверждения.';
+          status.classList.add('success');
+          form.reset();
+        } else {
+          status.textContent = text || 'Ошибка при отправке.';
+          status.classList.add('error');
+        }
+      } catch (err) {
+        status.textContent = 'Ошибка соединения.';
+        status.classList.add('error');
+      }
+    });
+  </script>
 </body>
 </html>

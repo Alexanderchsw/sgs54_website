@@ -7,6 +7,19 @@
   <link rel="stylesheet" href="styles.css"/>
   <link rel="icon" href="favicon.png" type="image/png">
   <script defer src="script.js"></script>
+  <style>
+    .form-status {
+      margin-top: 10px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .form-status.success {
+      color: green;
+    }
+    .form-status.error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -55,9 +68,8 @@
 
     <h2 class="price-title">Стоимость работ</h2>
     <div class="diagnostic-price">
-      <p><strong>от 2 000 руб.</strong> — замена колодок и прокачка тормозов</p>
-      <p><strong>от 7 000 руб.</strong> — ремонт тормозной системы с заменой элементов</p>
-      <p><em>* Точная стоимость определяется после диагностики</em></p>
+      <p><strong>от 1 500 руб.</strong> за нормо-час работы</p>
+      <p><em>* Окончательная стоимость зависит от объема и сложности работ и определяется после диагностики</em></p>
     </div>
 
     <div class="faq">
@@ -74,11 +86,12 @@
 
     <div class="request-form">
       <h3>Записаться на диагностику тормозов</h3>
-      <form>
-        <input type="text" placeholder="Ваше имя" required>
-        <input type="tel" placeholder="Телефон" required>
-        <textarea placeholder="Комментарий (необязательно)"></textarea>
+      <form id="brake-form">
+        <input type="text" name="name" placeholder="Ваше имя" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <textarea name="message" placeholder="Комментарий (необязательно)"></textarea>
         <button type="submit" class="btn">Оставить заявку</button>
+        <p id="form-status" class="form-status"></p>
       </form>
     </div>
 
@@ -93,5 +106,45 @@
       <a href="mailto:info@sgs54.ru" class="email">info@sgs54.ru</a>
     </p>
   </footer>
+
+  <script>
+    document.getElementById('brake-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const message = form.message.value.trim() || 'Нет комментария';
+      const status = document.getElementById('form-status');
+
+      status.textContent = '';
+      status.className = 'form-status';
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('message', message);
+
+      try {
+        const res = await fetch('send-request.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const text = await res.text();
+        if (res.ok && text === 'OK') {
+          status.textContent = 'Спасибо! Мы скоро с вами свяжемся.';
+          status.classList.add('success');
+          form.reset();
+        } else {
+          status.textContent = text || 'Ошибка отправки.';
+          status.classList.add('error');
+        }
+      } catch (err) {
+        status.textContent = 'Ошибка соединения.';
+        status.classList.add('error');
+      }
+    });
+  </script>
 </body>
 </html>

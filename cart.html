@@ -5,6 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Корзина | СГС</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="img/favicon.png" type="image/png">
+  <style>
+    .error-msg {
+      display: none;
+      color: red;
+      margin-top: -5px;
+      font-size: 12px;
+    }
+    .form-status {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .form-status.success {
+      color: green;
+    }
+    .form-status.error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
 
@@ -64,15 +83,75 @@
         <label for="customer-phone">Телефон *</label>
         <input type="tel" id="customer-phone"
                placeholder="+7 (___) ___-__-__" required>
-        <!-- подпись-ошибка -->
         <small id="phone-error" class="error-msg">Введите корректный номер телефона</small>
 
         <button type="submit" class="btn big-btn">Отправить</button>
+        <p id="form-status" class="form-status"></p>
       </form>
     </div>
   </div>
 
   <!-- ===== СКРИПТЫ ===== -->
   <script src="cart.js"></script>
+  <script>
+    const modal = document.getElementById("order-modal");
+    const openBtn = document.getElementById("checkoutBtn");
+    const closeBtn = document.querySelector(".close-modal");
+    const form = document.getElementById("order-form");
+    const status = document.getElementById("form-status");
+    const errorMsg = document.getElementById("phone-error");
+
+    openBtn.addEventListener("click", () => {
+      modal.classList.remove("hidden");
+      status.textContent = '';
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.classList.add("hidden");
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("customer-name").value.trim();
+      const phone = document.getElementById("customer-phone").value.trim();
+      const cart = localStorage.getItem("cart") || "[]";
+
+      if (!/^\+7\s?\(?\d{3}\)?[\s-]?\d{3}-?\d{2}-?\d{2}$/.test(phone)) {
+        errorMsg.style.display = "block";
+        return;
+      } else {
+        errorMsg.style.display = "none";
+      }
+
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("phone", phone);
+      formData.append("cart", cart);
+
+      try {
+        const res = await fetch("send-order.php", {
+          method: "POST",
+          body: formData
+        });
+        const text = await res.text();
+
+        if (res.ok && text === "OK") {
+          status.textContent = "Заказ успешно отправлен!";
+          status.className = "form-status success";
+          form.reset();
+          localStorage.removeItem("cart");
+          document.getElementById("cart-body").innerHTML = "";
+          document.getElementById("total").textContent = "Итого (0 шт): 0 ₽";
+        } else {
+          status.textContent = text || "Ошибка при отправке заказа.";
+          status.className = "form-status error";
+        }
+      } catch (err) {
+        status.textContent = "Ошибка соединения с сервером.";
+        status.className = "form-status error";
+      }
+    });
+  </script>
 </body>
 </html>
