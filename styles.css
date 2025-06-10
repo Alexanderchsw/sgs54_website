@@ -1277,10 +1277,10 @@ body {
 
 .store-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
-  margin-top: 20px;
 }
+
 
 .product-card {
   position: relative;
@@ -1360,9 +1360,10 @@ body {
 
 .store-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
 }
+
 
 .product-card {
   position: relative;
@@ -2065,3 +2066,141 @@ body {
 
 .toast-success{ background:#4caf50; }
 .toast-warn   { background:#666; }
+
+@media (max-width: 768px) {
+  .navbar {
+    background-color: transparent;
+    margin-top: 1rem;
+    padding: 0;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+  }
+
+  .navbar li {
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0;
+  }
+
+  .navbar li:first-child {
+    border-top: none;
+  }
+
+  .navbar a {
+    display: block;
+    padding: 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  .header-top {
+    text-align: center;
+  }
+
+  .contact-info {
+    text-align: center;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .parts-info {
+    padding: 2rem 1rem;         /* Уменьшаем боковые отступы */
+    max-width: 100%;            /* Разрешаем занимать всю ширину */
+  }
+
+  .parts-info h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .parts-info ul {
+    padding-left: 1.2rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .parts-list li {
+    padding-left: 0.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cart-table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .cart-table table,
+  .cart-table thead,
+  .cart-table tbody,
+  .cart-table th,
+  .cart-table td,
+  .cart-table tr {
+    display: block;
+  }
+
+  .cart-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .cart-table td,
+  .cart-table th {
+    padding: 8px;
+    text-align: left;
+  }
+
+  .cart-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: inline-block;
+    width: 120px;
+  }
+
+  .cart-table th {
+    display: none; /* Скрываем заголовки */
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    margin: 1rem auto;
+    width: 90%;
+    padding: 0.5rem 0;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .navbar li {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar li:first-child {
+    border-top: none;
+  }
+
+  .navbar a {
+    padding: 0.8rem;
+    display: block;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+}
